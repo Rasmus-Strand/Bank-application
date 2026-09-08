@@ -1,6 +1,6 @@
 package com.example.bank_application.service;
 
-import com.example.bank_application.dto.UserRequest;
+import com.example.bank_application.dto.users.UserRequest;
 import com.example.bank_application.model.User;
 import com.example.bank_application.model.UserRole;
 import com.example.bank_application.repository.UserRepository;

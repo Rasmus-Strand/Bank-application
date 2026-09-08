@@ -14,8 +14,14 @@ public class BankAccount {
     private String name;
     @NotNull
     private BigDecimal balance;
-    @Column(unique = true, nullable = false)
-    private int accountNumber;
+    @Column(
+            name = "account_number",
+            unique = true,
+            nullable = false,
+            insertable = false,
+            updatable = false
+    )
+    private Long accountNumber;
     @Id
     @GeneratedValue
     private UUID id;
@@ -26,9 +32,9 @@ public class BankAccount {
     protected BankAccount(){
 
     }
-    public BankAccount(String name, BigDecimal balance, User user) {
+    public BankAccount(String name, User user) {
         this.name = name;
-        this.balance = balance;
+        this.balance = BigDecimal.ZERO;
         this.user = user;
         this.active = true;
     }
@@ -60,7 +66,7 @@ public class BankAccount {
         return user;
     }
 
-    public int getAccountNumber() {
+    public Long getAccountNumber() {
         return accountNumber;
     }
 }

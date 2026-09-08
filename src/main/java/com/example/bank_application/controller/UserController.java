@@ -1,7 +1,7 @@
 package com.example.bank_application.controller;
 
-import com.example.bank_application.dto.UserRequest;
-import com.example.bank_application.dto.UserResponse;
+import com.example.bank_application.dto.users.UserRequest;
+import com.example.bank_application.dto.users.UserResponse;
 import com.example.bank_application.model.User;
 import com.example.bank_application.service.UserService;
 import jakarta.validation.Valid;
