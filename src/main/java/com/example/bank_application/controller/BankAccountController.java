@@ -1,7 +1,6 @@
 package com.example.bank_application.controller;
 
-import com.example.bank_application.dto.bankaccounts.BankAccountRequest;
-import com.example.bank_application.dto.bankaccounts.BankAccountResponse;
+import com.example.bank_application.dto.bankaccounts.*;
 
 import com.example.bank_application.model.BankAccount;
 import com.example.bank_application.service.BankAccountService;
@@ -53,6 +52,27 @@ public class BankAccountController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(savedAccount));
     }
+
+    @PostMapping("/accounts/{id}/deposit")
+    public ResponseEntity<BankAccountResponse> deposit(@PathVariable UUID id, @Valid @RequestBody DepositRequest request){
+        BankAccount updatedAccount = bankAccountService.deposit(id, request.getAmount());
+
+        return ResponseEntity.ok(toResponse(updatedAccount));
+    }
+
+     @PostMapping("/accounts/{id}/withdraw")
+     public ResponseEntity<BankAccountResponse> withdraw(@PathVariable UUID id, @Valid @RequestBody WithdrawRequest request){
+        BankAccount updateAccount = bankAccountService.withdraw(id, request.getAmount());
+
+        return ResponseEntity.ok(toResponse(updateAccount));
+     }
+
+    @PostMapping("/accounts/{fromAccountId}/transfer/{toAccountId}")
+    public ResponseEntity<BankAccountResponse> transfer(@PathVariable("fromAccountId") UUID fromAccountId, @PathVariable("toAccountId") UUID toAccountId, @Valid @RequestBody TransferRequest request) {
+        BankAccount updateAccounts = bankAccountService.transfer(fromAccountId, toAccountId, request.getAmount());
+
+        return ResponseEntity.ok(toResponse(updateAccounts));
+     }
 
     private BankAccountResponse toResponse(BankAccount bankAccount){
         return new BankAccountResponse(bankAccount.getId(), bankAccount.getName(), bankAccount.getAccountNumber(), bankAccount.getBalance(), bankAccount.isActive());

@@ -39,6 +39,7 @@ public class BankAccount {
         this.active = true;
     }
 
+
     public UUID getId() {
         return id;
     }
@@ -68,5 +69,16 @@ public class BankAccount {
 
     public Long getAccountNumber() {
         return accountNumber;
+    }
+
+    public void deposit(BigDecimal amount){
+        balance = balance.add(amount);
+    }
+
+    public void withdraw(BigDecimal amount){
+        if (balance.compareTo(amount) < 0) {
+            throw new RuntimeException("Insufficient funds");
+        }
+        balance = balance.subtract(amount);
     }
 }

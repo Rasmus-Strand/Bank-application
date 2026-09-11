@@ -12,12 +12,14 @@ import java.util.UUID;
 public class Transaction {
     @NotNull
     private BigDecimal amount;
+    @NotNull
     @Enumerated(EnumType.STRING)
     private TransactionTypes type;
     @ManyToOne
     private BankAccount from;
     @ManyToOne
     private BankAccount to;
+    @NotNull
     private LocalDateTime dateTime;
     @Id
     @GeneratedValue
@@ -58,7 +60,4 @@ public class Transaction {
         return type;
     }
 
-    public void setType(TransactionTypes types) {
-        this.type = types;
-    }
 }

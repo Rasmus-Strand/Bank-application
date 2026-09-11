@@ -18,5 +18,8 @@ public class TransactionService {
     public List<Transaction> findAllTransactions(){
         return transactionRepository.findAll();
     }
+    public Transaction saveTransaction(Transaction transaction){
+        return transactionRepository.save(transaction);
+    }
 
 }
