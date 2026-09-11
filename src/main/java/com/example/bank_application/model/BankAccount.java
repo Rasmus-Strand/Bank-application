@@ -1,5 +1,6 @@
 package com.example.bank_application.model;
 
+import com.example.bank_application.exception.InsufficientFundsException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -77,7 +78,7 @@ public class BankAccount {
 
     public void withdraw(BigDecimal amount){
         if (balance.compareTo(amount) < 0) {
-            throw new RuntimeException("Insufficient funds");
+            throw new InsufficientFundsException("Insufficient funds");
         }
         balance = balance.subtract(amount);
     }

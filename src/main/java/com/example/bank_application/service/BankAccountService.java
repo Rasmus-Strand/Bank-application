@@ -1,6 +1,10 @@
 package com.example.bank_application.service;
 
 import com.example.bank_application.dto.bankaccounts.BankAccountRequest;
+import com.example.bank_application.exception.AccountInactiveException;
+import com.example.bank_application.exception.AccountNotFoundException;
+import com.example.bank_application.exception.SameAccountTransferException;
+import com.example.bank_application.exception.UserNotFoundException;
 import com.example.bank_application.model.BankAccount;
 import com.example.bank_application.model.Transaction;
 import com.example.bank_application.model.TransactionTypes;
@@ -27,7 +31,7 @@ public class BankAccountService {
     }
 
     public BankAccount createAccount(BankAccountRequest request, UUID userId){
-        User user = userService.findUserById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userService.findUserById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         BankAccount bankAccount = new BankAccount(
                 request.getName(),
@@ -49,10 +53,10 @@ public class BankAccountService {
 
      @Transactional
     public BankAccount deposit (UUID toAccountId, BigDecimal amount){
-        BankAccount bankAccount = bankAccountRepository.findById(toAccountId).orElseThrow(() -> new RuntimeException("Account not found"));
+        BankAccount bankAccount = bankAccountRepository.findById(toAccountId).orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
         if (!bankAccount.isActive()){
-            throw new RuntimeException("Account is inactive");
+            throw new AccountInactiveException("Account is inactive");
         }
         bankAccount.deposit(amount);
         Transaction transaction = new Transaction(amount, TransactionTypes.DEPOSIT,null, bankAccount, LocalDateTime.now());
@@ -62,10 +66,10 @@ public class BankAccountService {
 
     @Transactional
     public BankAccount withdraw(UUID fromAccountId, BigDecimal amount){
-        BankAccount bankAccount = bankAccountRepository.findById(fromAccountId).orElseThrow(() -> new RuntimeException("Account not found"));
+        BankAccount bankAccount = bankAccountRepository.findById(fromAccountId).orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
         if (!bankAccount.isActive()){
-            throw new RuntimeException("Account is inactive");
+            throw new AccountInactiveException("Account is inactive");
         }
         bankAccount.withdraw(amount);
         Transaction transaction = new Transaction(amount, TransactionTypes.WITHDRAW,bankAccount, null, LocalDateTime.now());
@@ -75,15 +79,15 @@ public class BankAccountService {
 
     @Transactional
     public BankAccount transfer(UUID fromAccountId, UUID toAccountId, BigDecimal amount){
-        BankAccount bankAccountFrom = bankAccountRepository.findById(fromAccountId).orElseThrow(() -> new RuntimeException("Account not found"));
-        BankAccount bankAccountTo = bankAccountRepository.findById(toAccountId).orElseThrow(() -> new RuntimeException("Account not found"));
+        BankAccount bankAccountFrom = bankAccountRepository.findById(fromAccountId).orElseThrow(() -> new AccountNotFoundException("Account not found"));
+        BankAccount bankAccountTo = bankAccountRepository.findById(toAccountId).orElseThrow(() -> new AccountNotFoundException("Account not found"));
 
         if (!bankAccountFrom.isActive() || !bankAccountTo.isActive()){
-            throw new RuntimeException("Account is inactive");
+            throw new AccountInactiveException("Account is inactive");
         }
 
         if (fromAccountId.equals(toAccountId)) {
-            throw new RuntimeException("Cannot transfer to the same account");
+            throw new SameAccountTransferException("Cannot transfer to the same account");
         }
         bankAccountFrom.withdraw(amount);
         bankAccountTo.deposit(amount);
