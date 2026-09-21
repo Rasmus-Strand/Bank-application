@@ -1,10 +1,12 @@
 package com.example.bank_application.service;
 
+import com.example.bank_application.config.SecurityConfig;
 import com.example.bank_application.dto.users.UserRequest;
 import com.example.bank_application.model.User;
 import com.example.bank_application.model.UserRole;
 import com.example.bank_application.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,17 +16,15 @@ import java.util.UUID;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository){
+    private final PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User createUser(UserRequest request){
 
-        String hash = BCrypt.hashpw(
-                request.getPassword(),
-                BCrypt.gensalt()
-        );
+        String hash = passwordEncoder.encode(request.getPassword());
 
         User hashedUser = new User(
                 request.getUsername(),

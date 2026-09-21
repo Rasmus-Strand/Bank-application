@@ -95,4 +95,32 @@ public class BankAccountService {
         transactionService.saveTransaction(transaction);
         return bankAccountFrom;
     }
+
+    public boolean userOwnsAccount(UUID accountId, String username) {
+        User user = userService.findByUsername(username)
+                .orElseThrow(() ->
+                        new UserNotFoundException("User not found"));
+
+        BankAccount account = bankAccountRepository.findById(accountId)
+                .orElseThrow(() ->
+                        new AccountNotFoundException("Account not found"));
+
+        return account.getUser().getId().equals(user.getId());
+    }
+
+    public List<BankAccount> findBankAccountsForUser(String username) {
+        User user = userService.findByUsername(username)
+                .orElseThrow(() ->
+                        new UserNotFoundException("User not found"));
+
+        return bankAccountRepository.findByUserId(user.getId());
+    }
+
+    public boolean userMatchesId(String username, UUID userId) {
+        User user = userService.findByUsername(username)
+                .orElseThrow(() ->
+                        new UserNotFoundException("User not found"));
+
+        return user.getId().equals(userId);
+    }
 }
