@@ -10,6 +10,10 @@ public class BankAccountRequest {
 
     public BankAccountRequest(){
     }
+
+    public BankAccountRequest(String name) {
+        this.name = name;
+    }
     public String getName() {
         return name;
     }
